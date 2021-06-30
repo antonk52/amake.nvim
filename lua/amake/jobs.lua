@@ -1,7 +1,7 @@
 local jobs = {}
 
 jobs.eslint = {
-    cmd = {'npm', 'run', 'lint', '--', '--format=unix'},
+    cmd = {'npx', 'eslint', '--ext=.ts,.js,.jsx,.tsx', '--', '--format=unix'},
     error_format = '%E\\ %#%f:%l:%c:\\ %m,%-G%.%#',
     dev_comment = 'Make sure to call eslint with "--format=unix" or provide your own "error_format"',
 }
