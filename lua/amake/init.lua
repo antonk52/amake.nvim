@@ -1,3 +1,4 @@
+local JOBS = require('amake.jobs')
 local M = {}
 
 -- TODO sort jobs by the list,
@@ -5,13 +6,6 @@ local M = {}
 --
 -- { [job_name]: job_id | nil }
 local current_jobs = {}
-
-local default_job_description = {
-    cmd = {'npx', 'tsc', '--noEmit'},
-    error_format='%E\\ %#%f\\ %#(%l\\\\\\,%c):\\ error\\ TS%n:\\ %m,%C%m',
-    msg_success = 'No errors!',
-    msg_error = '{{count}} errors found',
-}
 
 local function logger(severity, msg)
     if severity < 1 then
@@ -29,12 +23,10 @@ local function logger(severity, msg)
     print(to_print .. msg)
 end
 
+-- returns merged default and user jobs
 local function get_known_jobs()
     -- Default jobs
-    local result = {
-        tsc = default_job_description,
-        typescript = default_job_description,
-    }
+    local result = JOBS.jobs
 
     -- Assign user jobs
     if vim.fn.exists('g:amake_jobs') == 1 then
@@ -44,10 +36,10 @@ local function get_known_jobs()
                 if type(v) == 'table' then
                     result[k] = v
                     if type(v.msg_success) ~= 'string' then
-                        result[k].msg_success = default_job_description.msg_success
+                        result[k].msg_success = JOBS.default_fields.msg_success
                     end
                     if type(v.msg_error) ~= 'string' then
-                        result[k].msg_error = default_job_description.msg_error
+                        result[k].msg_error = JOBS.default_fields.msg_error
                     end
                 else
                     -- TODO
@@ -72,7 +64,7 @@ end
 local function populate_qf(output, job)
     local old_error_format = vim.o.errorformat
 
-    vim.o.errorformat = default_job_description.error_format
+    vim.o.errorformat = job.error_format
 
     local lines = vim.fn.split(output, '\n')
 
@@ -93,11 +85,16 @@ local function populate_qf(output, job)
     vim.o.errorformat = old_error_format
 
     if (vim.bo.syntax ~= 'qf') then
+        local success_msg_template = job.msg_success or JOBS.default_fields.msg_success
         -- if syntax is not "quickfix" than we have no errors
-        print(job.msg_success)
+        print(vim.fn.substitute(success_msg_template, '{{job}}', job.name, ''))
     else
+        local err_count = vim.fn.len(vim.fn.getqflist())
+        local err_msg_template = job.msg_error or JOBS.default_fields.msg_error
+        local count_replaced = vim.fn.substitute(err_msg_template, '{{count}}', err_count, '')
+        local job_replaced = vim.fn.substitute(count_replaced, '{{job}}', job.name, '')
         -- error message
-        print(vim.fn.substitute(job.msg_error, '{{count}}', vim.fn.len(vim.fn.getqflist()), ''))
+        print(job_replaced)
     end
 end
 
@@ -154,7 +151,7 @@ function M.init(job_name)
     }
 
     local job_id = vim.fn.jobstart(
-        default_job_description.cmd,
+        known_jobs[job_name].cmd,
         callbacks
     )
 
