@@ -26,7 +26,12 @@ A job is a table/dictionary that can have following properties:
 - `cmd` command to execute a job(table or dictionary) **required**
 - `error_format` used to match error from command output(string) for syntax see `:help errorformat` **required**
 - `msg_success` printed when command had no errors(string)
-- `msg_fail` printed when command had errors(string), use `{{count}}` to include error count
+- `msg_fail` printed when command had errors(string)
+
+For message fields you can use placeholders for:
+
+- `{{count}}` error count
+- `{{job}}` job name
 
 Jobs can be setup using vimscript or lua. See examples.
 
@@ -37,7 +42,7 @@ let g:amake_jobs = {
   \     'cmd': ['npx', 'tsc', '--noEmit'],
   \     'error_format': '%E\ %#%f\ %#(%l\\\,%c):\ error\ TS%n:\ %m,%C%m',
   \     'msg_success': 'No errors!',
-  \     'msg_error': '{{count}} errors found',
+  \     'msg_error': '{{job}}: {{count}} errors found',
   \   }
   \ }
 ```
@@ -52,7 +57,7 @@ vim.g.amake_jobs = {
         -- note that each `\` has to be escaped
         error_format = '%E\\ %#%f\\ %#(%l\\\\\\,%c):\\ error\\ TS%n:\\ %m,%C%m',
         msg_success = 'No errors!',
-        msg_error = '{{count}} errors found',
+        msg_error = '{{job}}: {{count}} errors found',
     }
 }
 ```
