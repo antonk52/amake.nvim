@@ -51,13 +51,15 @@ or
 
 ```lua
 -- lua
-vim.g.amake_jobs = {
-    typescript = {
-        cmd = {'npx', 'tsc', '--noEmit'},
-        -- note that each `\` has to be escaped
-        error_format = '%E\\ %#%f\\ %#(%l\\\\\\,%c):\\ error\\ TS%n:\\ %m,%C%m',
-        msg_success = 'No errors!',
-        msg_error = '{{job}}: {{count}} errors found',
+require('amake').setup({
+    jobs = {
+        typescript = {
+            cmd = {'npx', 'tsc', '--noEmit'},
+            -- note that each `\` has to be escaped
+            error_format = '%E\\ %#%f\\ %#(%l\\\\\\,%c):\\ error\\ TS%n:\\ %m,%C%m',
+            msg_success = 'No errors!',
+            msg_error = '{{job}}: {{count}} errors found',
+        }
     }
-}
+})
 ```

@@ -162,4 +162,10 @@ function M.list_jobs()
     print(vim.inspect(get_known_jobs()))
 end
 
+function M.setup(options)
+    options = options or {}
+
+    vim.g.amake_jobs = options.jobs or {}
+end
+
 return M
