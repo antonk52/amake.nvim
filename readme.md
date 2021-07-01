@@ -2,7 +2,7 @@
 
 Asynchronous `:make` for neovim
 
-Make/build/lint/test etc execution without blocking the your work flow. Executes defined commands and populated quickfix window with errors found.
+Make/build/lint/test execution without blocking your work flow. Executes defined commands and populated quickfix window with errors found.
 
 ## Install
 
