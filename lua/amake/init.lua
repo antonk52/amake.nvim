@@ -66,7 +66,7 @@ local function populate_qf(output, job)
 
     vim.o.errorformat = job.error_format
 
-    local lines = vim.fn.split(output, '\n')
+    local lines = vim.split(output, '\n')
 
     -- empty quickfix list before populating it
     vim.fn.setqflist({})
@@ -117,8 +117,8 @@ function M.init(job_name)
         print('job '..job_name..' has been canceled')
     end
 
-    if vim.fn.has_key(known_jobs, job_name) == 0 then
-        local str_keys = vim.fn.join(keys(known_jobs), '/')
+    if known_jobs[job_name] == nil then
+        local str_keys = table.concat(keys(known_jobs), '/')
         print('Unknown job name "' .. job_name .. '", provide one of ' .. str_keys)
         return nil
     end
@@ -131,7 +131,7 @@ function M.init(job_name)
     local callbacks = {
         on_stdout = function(_, data, event)
             logger(3, 'on_stdout ' .. event)
-            output = output .. vim.fn.join(data, '\n')
+            output = output .. table.concat(data, '\n')
 
             return nil
         end,
