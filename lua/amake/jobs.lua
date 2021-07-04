@@ -11,6 +11,12 @@ jobs.tsc = {
     error_format='%E\\ %#%f\\ %#(%l\\\\\\,%c):\\ error\\ TS%n:\\ %m,%C%m',
 }
 
+jobs.flow = {
+    name = 'flow',
+    cmd = {'npx', 'flow', '--timeout', '5', '--retry-if-init', 'false', '--from', 'vim'},
+    error_format = '%EFile "%f"\\, line %l\\, characters %c-%.%#,%Z%m,%-G%.%#'
+}
+
 jobs.typescript = jobs.tsc
 
 local function add_job_names(jobs_table)
