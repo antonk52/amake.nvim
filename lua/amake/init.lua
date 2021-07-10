@@ -11,10 +11,10 @@ local function logger(severity, msg)
     if severity < 1 then
         return nil
     end
-    if vim.fn.exists('g:amake_debug_severity') ~= 1 then
+    local g_severity = vim.g.amake_debug_severity
+    if g_severity == nil then
         return nil
     end
-    local g_severity = vim.api.nvim_get_var('amake_debug_severity')
     if severity < g_severity then
         return nil
     end
@@ -29,8 +29,8 @@ local function get_known_jobs()
     local result = JOBS.jobs
 
     -- Assign user jobs
-    if vim.fn.exists('g:amake_jobs') == 1 then
-        local amake_jobs = vim.api.nvim_get_var('amake_jobs')
+    local amake_jobs = vim.g.amake_jobs
+    if amake_jobs ~= nil then
         if type(amake_jobs) == 'table' then
             for k,v in pairs(amake_jobs) do
                 if type(v) == 'table' then
@@ -75,11 +75,12 @@ local function populate_qf(output, job)
     -- TODO pass line to nvim command
     for _, line in pairs(lines) do
         -- an attempt to pass data from lua to vim land
-        vim.api.nvim_set_var('amake_line', line)
+        vim.g.amake_line = line
+        -- using output to make sure it behaves synchronously
         vim.api.nvim_command_output('caddexpr g:amake_line')
     end
     -- open quickfix window if not empty
-    vim.api.nvim_command_output('cwindow')
+    vim.cmd('cwindow')
 
     -- restore errorformat
     vim.o.errorformat = old_error_format
