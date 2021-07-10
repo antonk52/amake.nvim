@@ -157,6 +157,8 @@ function M.init(job_name)
     )
 
     current_jobs[job_name] = job_id
+
+    print('Amake: started executing "' .. job_name .. '" job...')
 end
 
 function M.list_jobs()
