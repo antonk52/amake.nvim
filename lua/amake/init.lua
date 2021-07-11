@@ -30,23 +30,23 @@ local function get_known_jobs()
 
     -- Assign user jobs
     local amake_jobs = vim.g.amake_jobs
-    if amake_jobs ~= nil then
-        if type(amake_jobs) == 'table' then
-            for k,v in pairs(amake_jobs) do
-                if type(v) == 'table' then
-                    result[k] = v
-                    if type(v.msg_success) ~= 'string' then
-                        result[k].msg_success = JOBS.default_fields.msg_success
-                    end
-                    if type(v.msg_error) ~= 'string' then
-                        result[k].msg_error = JOBS.default_fields.msg_error
-                    end
-                else
-                    -- TODO
-                end
+    if amake_jobs == nil then
+        return result
+    end
+    if type(amake_jobs) ~= 'table' then
+        print('amake.nvim: g:amake_jobs is set to a non table value. Ignoring')
+        return result
+    end
+
+    for k,v in pairs(amake_jobs) do
+        if type(v) == 'table' then
+            result[k] = v
+            if type(v.msg_success) ~= 'string' then
+                result[k].msg_success = JOBS.default_fields.msg_success
             end
-        else
-            print('amake.nvim: g:amake_jobs is set to a non table value. Ignoring')
+            if type(v.msg_error) ~= 'string' then
+                result[k].msg_error = JOBS.default_fields.msg_error
+            end
         end
     end
 
