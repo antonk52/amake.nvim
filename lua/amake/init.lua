@@ -104,7 +104,8 @@ function M.init(job_name)
     local known_jobs = get_known_jobs()
 
     if known_jobs[job_name] == nil then
-        print('Unknown job ' .. job_name)
+        local str_keys = table.concat(keys(known_jobs), '/')
+        print('Unknown job "' .. job_name .. '", provide one of ' .. str_keys)
         return nil
     end
     -- check if such job_name is currently executing
@@ -116,12 +117,6 @@ function M.init(job_name)
         vim.fn.remove(current_jobs, job_name)
         -- DO NOT DELETE
         print('job '..job_name..' has been canceled')
-    end
-
-    if known_jobs[job_name] == nil then
-        local str_keys = table.concat(keys(known_jobs), '/')
-        print('Unknown job name "' .. job_name .. '", provide one of ' .. str_keys)
-        return nil
     end
 
     local output = ''
@@ -158,7 +153,7 @@ function M.init(job_name)
 
     current_jobs[job_name] = job_id
 
-    print('Amake: started executing "' .. job_name .. '" job...')
+    print('Amake: executing "' .. job_name .. '" job...')
 end
 
 function M.list_jobs()
