@@ -1,5 +1,11 @@
 local jobs = {}
 
+jobs.luacheck = {
+    cmd = {'luacheck', '**/*.lua'},
+    error_format = '%E\\ \\ \\ \\ %f:%l:%c:\\ %m,%-G%.%#',
+    dev_comment = 'Make sure to pass filepaths to luacheck',
+}
+
 jobs.eslint = {
     cmd = {'npx', 'eslint', '--ext=.ts,.js,.jsx,.tsx', '--', '--format=unix'},
     error_format = '%E\\ %#%f:%l:%c:\\ %m,%-G%.%#',
